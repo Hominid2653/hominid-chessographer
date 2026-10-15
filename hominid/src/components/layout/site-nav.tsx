@@ -6,7 +6,8 @@ import { site } from '@/content/site'
 import { cn } from '@/lib/utils'
 
 function isCurrent(href: string, pathname: string) {
-  return !href.includes('#') && href === pathname
+  if (href.includes('#')) return false
+  return pathname === href || pathname.startsWith(`${href}/`)
 }
 
 export function SiteNav({ className }: { className?: string }) {
@@ -22,14 +23,14 @@ export function SiteNav({ className }: { className?: string }) {
       aria-label="Primary"
       className={cn('grid grid-cols-[1fr_auto_1fr] items-center gap-3', className)}
     >
-      <div className="flex items-center justify-start gap-3 md:gap-8">
+      <div className="flex items-center justify-start gap-2.5 md:gap-8">
         {left.map((link) => (
           <SmartLink
             key={link.href}
             to={link.href}
             current={isCurrent(link.href, currentPath)}
             className={cn(
-              'text-[10px] tracking-[0.14em] uppercase transition-opacity hover:opacity-60 md:text-[11px] md:tracking-[0.2em]',
+              'text-[11px] tracking-[0.08em] whitespace-nowrap uppercase transition-opacity hover:opacity-60 md:text-[13px] md:tracking-[0.16em]',
               isCurrent(link.href, currentPath) && 'underline decoration-1 underline-offset-8',
             )}
           >
@@ -37,22 +38,22 @@ export function SiteNav({ className }: { className?: string }) {
           </SmartLink>
         ))}
       </div>
-      <SmartLink to="/" className="text-center">
-        <span className="block font-serif text-[13px] tracking-[0.22em] uppercase md:text-[15px]">
+      <SmartLink to="/" className="px-1 text-center leading-none md:px-2">
+        <span className="block font-serif text-[1.2rem] tracking-[0.08em] whitespace-nowrap uppercase md:text-[1.75rem] md:tracking-[0.14em]">
           {site.shortName}
         </span>
-        <span className="mt-1 block text-[8px] tracking-[0.28em] uppercase md:text-[9px] md:tracking-[0.32em]">
+        <span className="mt-1 block text-[9px] tracking-[0.2em] whitespace-nowrap uppercase opacity-60 md:mt-1.5 md:text-[11px] md:tracking-[0.28em]">
           Photography
         </span>
       </SmartLink>
-      <div className="flex items-center justify-end gap-3 md:gap-8">
+      <div className="flex items-center justify-end gap-2.5 md:gap-8">
         {right.map((link) => (
           <SmartLink
             key={link.href}
             to={link.href}
             current={isCurrent(link.href, currentPath)}
             className={cn(
-              'text-[10px] tracking-[0.14em] uppercase transition-opacity hover:opacity-60 md:text-[11px] md:tracking-[0.2em]',
+              'text-[11px] tracking-[0.08em] whitespace-nowrap uppercase transition-opacity hover:opacity-60 md:text-[13px] md:tracking-[0.16em]',
               isCurrent(link.href, currentPath) && 'underline decoration-1 underline-offset-8',
             )}
           >

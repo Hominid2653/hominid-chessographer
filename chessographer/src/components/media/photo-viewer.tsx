@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react'
+
 import {
   Dialog,
   DialogContent,
@@ -15,9 +17,11 @@ type ViewPhoto = {
 export function PhotoViewer({
   photo,
   onClose,
+  breadcrumb,
 }: {
   photo: ViewPhoto | null
   onClose: () => void
+  breadcrumb?: ReactNode
 }) {
   return (
     <Dialog
@@ -28,6 +32,7 @@ export function PhotoViewer({
     >
       {photo ? (
         <DialogContent variant="viewer">
+          {breadcrumb ? <div className="mb-4">{breadcrumb}</div> : null}
           <img
             src={photo.image}
             alt={photo.alt}

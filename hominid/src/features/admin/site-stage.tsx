@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, type ReactNode } from 'react'
+import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react'
 
 import { EditModeProvider, PreviewNavProvider } from '@/app/media-context'
 import { SiteFooter } from '@/components/layout/site-footer'
@@ -22,6 +22,7 @@ export function SiteStage({
   onSelect: (slot: ImageSlot) => void
 }) {
   const scroller = useRef<HTMLDivElement>(null)
+  const [path, setPath] = useState(page === 'home' ? '/' : `/${page}`)
 
   const go = useCallback(
     (href: string) => {
@@ -30,9 +31,17 @@ export function SiteStage({
         document.getElementById(id)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
         return
       }
-      if (href === '/portfolio') onPage('portfolio')
-      else if (href === '/tournaments') onPage('tournaments')
-      else onPage('home')
+      const clean = href.split('#')[0] || '/'
+      if (clean === '/portfolio' || clean.startsWith('/portfolio/')) {
+        onPage('portfolio')
+        setPath(clean)
+      } else if (clean === '/tournaments' || clean.startsWith('/tournaments/')) {
+        onPage('tournaments')
+        setPath(clean)
+      } else {
+        onPage('home')
+        setPath('/')
+      }
       scroller.current?.scrollTo({ top: 0 })
     },
     [onPage],
@@ -47,8 +56,6 @@ export function SiteStage({
     { id: 'portfolio', label: 'Portfolio' },
     ...(tournamentsPage ? [{ id: 'tournaments' as const, label: 'Tournaments' }] : []),
   ]
-  const path = page === 'home' ? '/' : `/${page}`
-
   return (
     <div className="flex h-full min-h-0 flex-col bg-[#d7d4cf]">
       <div className="flex items-center justify-between gap-4 border-b border-black/10 px-4 py-3">
@@ -59,7 +66,10 @@ export function SiteStage({
               key={tab.id}
               type="button"
               aria-pressed={page === tab.id}
-              onClick={() => onPage(tab.id)}
+              onClick={() => {
+                onPage(tab.id)
+                setPath(tab.id === 'home' ? '/' : `/${tab.id}`)
+              }}
               className={cn(
                 'cursor-pointer text-[11px] tracking-[0.16em] uppercase',
                 page === tab.id ? 'underline underline-offset-4' : 'opacity-50',

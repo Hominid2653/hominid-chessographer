@@ -1,6 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
+import { useNavigate, useParams } from 'react-router'
 
-import { useEditMode, useSite } from '@/app/media-hooks'
+import { useEditMode, usePreviewNav, useSite } from '@/app/media-hooks'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Container } from '@/components/layout/container'
 import { EditableImage } from '@/components/media/editable-image'
 import { SectionLabel } from '@/components/type/section-label'
@@ -16,11 +18,28 @@ function countLabel(count: number) {
   return `${count} ${count === 1 ? 'photograph' : 'photographs'}`
 }
 
+function themeSlug(theme: string) {
+  return theme
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+function partsFromPath(path: string | undefined) {
+  const parts = path?.split('/').filter(Boolean) ?? []
+  if (parts[0] !== 'portfolio') return { slug: null, photo: null }
+  return { slug: parts[1] ?? null, photo: parts[2] ?? null }
+}
+
 export function PortfolioFolders() {
   const { work } = useSite()
   const editing = Boolean(useEditMode())
-  const [open, setOpen] = useState<string | null>(null)
+  const preview = usePreviewNav()
+  const navigate = useNavigate()
+  const params = useParams()
   const sectionRef = useRef<HTMLElement>(null)
+  const route = preview ? partsFromPath(preview.path) : { slug: params.theme ?? null, photo: params.photo ?? null }
   const themes = work.filters.filter((item) => item !== 'All')
   const folders = themes
     .map((theme) => ({
@@ -28,12 +47,17 @@ export function PortfolioFolders() {
       items: work.items.filter((item) => item.category === theme),
     }))
     .filter((folder) => editing || folder.items.length > 0)
-  const current = folders.find((folder) => folder.theme === open)
+  const current = folders.find((folder) => themeSlug(folder.theme) === route.slug)
+
+  function go(href: string, replace = false) {
+    if (preview) preview.go(href)
+    else navigate(href, { replace })
+  }
 
   useEffect(() => {
-    if (!open) return
+    if (!route.slug) return
     sectionRef.current?.scrollIntoView({ block: 'start' })
-  }, [open])
+  }, [route.slug])
 
   return (
     <section ref={sectionRef} className="scroll-mt-20 pt-16 pb-24 md:pt-24 md:pb-36">
@@ -43,7 +67,12 @@ export function PortfolioFolders() {
             theme={current.theme}
             items={current.items}
             editing={editing}
-            onBack={() => setOpen(null)}
+            onOpen={(id) => go(`/portfolio/${themeSlug(current.theme)}/${id}`)}
+            onClose={() => {
+              if (!route.photo) return
+              go(`/portfolio/${themeSlug(current.theme)}`, true)
+            }}
+            activeId={route.photo}
           />
         ) : (
           <>
@@ -58,7 +87,7 @@ export function PortfolioFolders() {
                   <li key={folder.theme}>
                     <button
                       type="button"
-                      onClick={() => setOpen(folder.theme)}
+                      onClick={() => go(`/portfolio/${themeSlug(folder.theme)}`)}
                       className="group block w-full cursor-pointer text-left"
                     >
                       <div className="relative pt-3">
@@ -98,24 +127,27 @@ function FolderGallery({
   theme,
   items,
   editing,
-  onBack,
+  onOpen,
+  onClose,
+  activeId,
 }: {
   theme: string
   items: WorkItem[]
   editing: boolean
-  onBack: () => void
+  onOpen: (id: string) => void
+  onClose: () => void
+  activeId: string | null
 }) {
-  const [active, setActive] = useState<WorkItem | null>(null)
+  const active = items.find((item) => item.id === activeId) ?? null
 
   return (
     <>
-      <button
-        type="button"
-        onClick={onBack}
-        className="cursor-pointer text-[11px] tracking-[0.16em] uppercase hover:opacity-60"
-      >
-        All folders
-      </button>
+      <Breadcrumbs
+        items={[
+          { label: 'Portfolio', to: '/portfolio', replace: true },
+          { label: theme },
+        ]}
+      />
       <h2 className="mt-4 font-serif text-4xl tracking-[-0.03em] md:text-5xl">{theme}</h2>
       <p className="mt-4 text-[11px] tracking-[0.16em] text-muted-foreground uppercase">
         {items.length ? countLabel(items.length) : 'Empty folder'}
@@ -140,7 +172,7 @@ function FolderGallery({
                 ) : (
                   <button
                     type="button"
-                    onClick={() => setActive(item)}
+                      onClick={() => onOpen(item.id)}
                     className="group block w-full cursor-pointer overflow-hidden bg-muted text-left outline-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-foreground"
                     aria-label={`View ${item.title}`}
                   >
@@ -155,11 +187,20 @@ function FolderGallery({
       <Dialog
         open={active !== null}
         onOpenChange={(next) => {
-          if (!next) setActive(null)
+          if (!next) onClose()
         }}
       >
         {active ? (
           <DialogContent variant="viewer">
+            <Breadcrumbs
+              tone="light"
+              className="mb-4"
+              items={[
+                { label: 'Portfolio', to: '/portfolio', replace: true },
+                { label: theme, to: `/portfolio/${themeSlug(theme)}`, replace: true },
+                { label: active.title },
+              ]}
+            />
             <img src={active.image} alt={active.alt} className="max-h-[86svh] w-full object-contain" />
             <DialogTitle className="sr-only">{active.title}</DialogTitle>
             <DialogDescription className="sr-only">{active.category}</DialogDescription>

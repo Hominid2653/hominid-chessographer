@@ -18,7 +18,10 @@ export function App() {
           <Route element={<SiteLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/portfolio" element={<PortfolioPage />} />
+            <Route path="/portfolio/:theme" element={<PortfolioPage />} />
+            <Route path="/portfolio/:theme/:photo" element={<PortfolioPage />} />
             <Route path="/tournaments" element={<TournamentsPage />} />
+            <Route path="/tournaments/:album/:photo" element={<TournamentsPage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>
         </Routes>

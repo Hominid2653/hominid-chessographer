@@ -1,25 +1,48 @@
-import { useState } from 'react'
+import { useNavigate, useParams } from 'react-router'
 
-import { useEditMode, useMedia, useSite } from '@/app/media-hooks'
+import { useEditMode, useMedia, usePreviewNav, useSite } from '@/app/media-hooks'
+import { Breadcrumbs } from '@/components/layout/breadcrumbs'
 import { Container } from '@/components/layout/container'
 import { PageHero } from '@/components/layout/page-hero'
 import { EditableImage } from '@/components/media/editable-image'
 import { PhotoViewer } from '@/components/media/photo-viewer'
 
-type ActivePhoto = {
-  image: string
-  alt: string
-  title: string
-  caption: string
+function partsFromPath(path: string | undefined) {
+  const parts = path?.split('/').filter(Boolean) ?? []
+  if (parts[0] !== 'tournaments') return { album: null, photo: null }
+  return { album: parts[1] ?? null, photo: parts[2] ?? null }
 }
 
 export function TournamentsPage() {
   const site = useSite()
   const { tournaments, tournamentsHero } = useMedia()
   const editing = Boolean(useEditMode())
-  const [active, setActive] = useState<ActivePhoto | null>(null)
+  const preview = usePreviewNav()
+  const navigate = useNavigate()
+  const params = useParams()
+  const route = preview
+    ? partsFromPath(preview.path)
+    : { album: params.album ?? null, photo: params.photo ?? null }
+
+  function go(href: string, replace = false) {
+    if (preview) preview.go(href)
+    else navigate(href, { replace })
+  }
 
   if (!tournaments || !tournamentsHero) return null
+
+  const active = tournaments
+    .flatMap((tournament) =>
+      tournament.photos.map((photo) => ({
+        album: tournament.id,
+        photo: photo.id,
+        image: photo.image,
+        alt: photo.alt,
+        title: tournament.title,
+        caption: tournament.date,
+      })),
+    )
+    .find((photo) => photo.album === route.album && photo.photo === route.photo)
 
   return (
     <>
@@ -82,14 +105,7 @@ export function TournamentsPage() {
                           ) : (
                             <button
                               type="button"
-                              onClick={() =>
-                                setActive({
-                                  image: photo.image,
-                                  alt: photo.alt,
-                                  title: tournament.title,
-                                  caption: tournament.date,
-                                })
-                              }
+                              onClick={() => go(`/tournaments/${tournament.id}/${photo.id}`)}
                               aria-label={`View a photograph from ${tournament.title}`}
                               className="group block w-full cursor-pointer overflow-hidden bg-muted outline-none focus-visible:outline focus-visible:outline-1 focus-visible:outline-offset-4 focus-visible:outline-foreground"
                             >
@@ -117,7 +133,21 @@ export function TournamentsPage() {
               }
             : null
         }
-        onClose={() => setActive(null)}
+        onClose={() => {
+          if (!route.photo) return
+          go('/tournaments', true)
+        }}
+        breadcrumb={
+          active ? (
+            <Breadcrumbs
+              tone="light"
+              items={[
+                { label: 'Tournaments', to: '/tournaments', replace: true },
+                { label: active.title },
+              ]}
+            />
+          ) : null
+        }
       />
     </>
   )

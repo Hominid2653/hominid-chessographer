@@ -42,7 +42,7 @@ export function SiteHeader() {
           : 'bg-transparent text-white',
       )}
     >
-      <div className="px-5 py-4 md:px-10 md:py-5">
+      <div className="px-3 py-3 md:px-10 md:py-5">
         <SiteNav />
       </div>
     </header>

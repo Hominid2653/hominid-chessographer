@@ -11,6 +11,7 @@ export function SmartLink({
   ariaLabel,
   current,
   onClick,
+  replace,
 }: {
   to: string
   className?: string
@@ -18,6 +19,7 @@ export function SmartLink({
   ariaLabel?: string
   current?: boolean
   onClick?: () => void
+  replace?: boolean
 }) {
   const preview = usePreviewNav()
 
@@ -41,6 +43,7 @@ export function SmartLink({
   return (
     <Link
       to={to}
+      replace={replace}
       className={className}
       aria-label={ariaLabel}
       aria-current={current ? 'page' : undefined}

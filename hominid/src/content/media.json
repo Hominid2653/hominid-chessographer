@@ -1,0 +1,64 @@
+{
+  "slots": {
+    "hero": {
+      "image": "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=2400&q=80",
+      "alt": "Portrait of a woman standing in soft daylight",
+      "position": "center 22%"
+    },
+    "about": {
+      "image": "https://images.unsplash.com/photo-1465495976277-4387d4b0b4c6?auto=format&fit=crop&w=1800&q=80",
+      "alt": "A couple photographed outdoors in natural light",
+      "position": "center 30%"
+    }
+  },
+  "portfolio": [
+    {
+      "id": "close-study",
+      "title": "Close study",
+      "category": "Portraits",
+      "image": "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?auto=format&fit=crop&w=1800&q=80",
+      "alt": "Close portrait of a woman looking toward the camera",
+      "position": "center 18%"
+    },
+    {
+      "id": "procession",
+      "title": "Procession",
+      "category": "Weddings",
+      "image": "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=80",
+      "alt": "A couple walking together outdoors on their wedding day",
+      "position": "center 30%"
+    },
+    {
+      "id": "assembly",
+      "title": "Assembly",
+      "category": "Corporate",
+      "image": "https://images.unsplash.com/photo-1540575467063-178a50c2df87?auto=format&fit=crop&w=1600&q=80",
+      "alt": "An audience gathered for a conference",
+      "position": "center"
+    },
+    {
+      "id": "studio",
+      "title": "Studio",
+      "category": "Portraits",
+      "image": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=1400&q=80",
+      "alt": "Portrait of a woman against a muted background",
+      "position": "center 15%"
+    },
+    {
+      "id": "evening",
+      "title": "Evening",
+      "category": "Weddings",
+      "image": "https://images.unsplash.com/photo-1520854221256-17451cc331bf?auto=format&fit=crop&w=1600&q=80",
+      "alt": "A wedding celebration in warm evening light",
+      "position": "center 40%"
+    },
+    {
+      "id": "sitting",
+      "title": "Sitting",
+      "category": "Portraits",
+      "image": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=1400&q=80",
+      "alt": "Portrait of a man in soft light",
+      "position": "center 18%"
+    }
+  ]
+}

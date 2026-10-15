@@ -1,0 +1,122 @@
+@import 'tailwindcss';
+
+@theme inline {
+  --font-sans: 'Inter Tight', 'Segoe UI', sans-serif;
+  --font-serif: 'Instrument Serif', 'Times New Roman', serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--background);
+  --color-card-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-primary: var(--foreground);
+  --color-primary-foreground: var(--background);
+  --color-accent: var(--muted);
+  --color-accent-foreground: var(--foreground);
+  --color-ring: var(--foreground);
+  --color-frame: var(--frame);
+}
+
+:root {
+  color-scheme: light;
+  --background: #f6f4f1;
+  --foreground: #121212;
+  --muted: #ece8e2;
+  --muted-foreground: #5e5954;
+  --border: #e3ddd6;
+  --frame: #5f5818;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply m-0 bg-background font-sans text-foreground antialiased;
+  }
+
+  #root {
+    @apply min-h-svh;
+  }
+
+  ::selection {
+    background: var(--foreground);
+    color: var(--background);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    .splash-mark,
+    .splash-rule,
+    .hero-enter {
+      animation: none;
+    }
+  }
+}
+
+.motion {
+  scroll-behavior: auto;
+}
+
+.motion .reveal {
+  opacity: 0;
+  transform: translate3d(0, 1.75rem, 0);
+  transition:
+    opacity 1.05s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 1.15s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.motion .reveal.is-in {
+  opacity: 1;
+  transform: none;
+}
+
+.motion .reveal-media {
+  transform: scale(1.07);
+  transition: transform 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.motion .reveal.is-in .reveal-media {
+  transform: scale(1);
+}
+
+.hero-enter {
+  animation: splash-rise 1.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes splash-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes splash-draw {
+  from {
+    transform: scaleX(0);
+  }
+
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.splash-mark {
+  animation: splash-rise 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.splash-rule {
+  width: 4.5rem;
+  transform-origin: center;
+  animation: splash-draw 0.7s 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
